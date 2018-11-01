@@ -1,0 +1,1 @@
+{"virtualbox":{"/apps/":{"guestpath":"/apps","hostpath":"C:/source/repos","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/source/repos/skill_board_groundwork","disabled":false,"__vagrantfile":true}}}
