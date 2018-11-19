@@ -20,6 +20,9 @@ class UserSkillsController < ApplicationController
     #Update attributes
     @user_skill.interest_level = user_skill_params[:interest_level]
     @user_skill.skill_level = user_skill_params[:skill_level]
+
+    Category.upsert_all(user_skill_params[:categories], @skill)
+
     if @user_skill.save
       render json: @user_skill, status: :created, action: 'show'
     else
@@ -50,6 +53,6 @@ private
   end
 
   def user_skill_params
-    params.permit(:user_id, :skill_name, :skill_level, :interest_level, :categories)
+    params.permit(:user_id, :skill_name, :skill_level, :interest_level, :categories => [])
   end
 end
