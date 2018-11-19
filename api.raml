@@ -1,0 +1,329 @@
+#%RAML 1.0
+title: Skill Board
+version: v1
+baseUri: http://localhost:3003
+
+types:
+  UserResponse:
+    properties:
+      id: integer
+      username: string
+      first_name: string
+      last_name: string
+      email_address: string
+      job_title: string
+    example:
+      id: 1
+      username: jdavis
+      first_name: Joseph
+      last_name: Davis
+      email_address: joseph.davis@rtslabs.com
+      job_title: Software Engineer
+  UserResponseWithSkillLevels:
+    type: UserResponse
+    properties:
+      skill_level: integer
+      interest_level: integer
+    example:
+      id: 1
+      username: jdavis
+      first_name: Joseph
+      last_name: Davis
+      email_address: joseph.davis@rtslabs.com
+      job_title: Software Engineer
+      skill_level: 3
+      interest_level: 3
+  UserPayload:
+    properties:
+      username: string
+      first_name: string
+      last_name: string
+      email_address: string
+      job_title: string
+    example:
+      username: jdavis
+      first_name: Joseph
+      last_name: Davis
+      email_address: joseph.davis@rtslabs.com
+      job_title: Software Engineer
+  SkillResponse:
+    properties:
+      id: integer
+      skill_name: string
+      description: string
+    example:
+      id: 1
+      skill_name: "Ruby on Rails"
+      description: "Open source language maintained by Basecamp"
+  SkillPayload:
+    properties:
+      skill_name: string
+      description: string
+    example:
+      skill_name: "Ruby on Rails"
+      description: "Open source language maintained by Basecamp"
+  SkillResponseWithUsersAndCategories:
+    type: SkillResponse
+    properties:
+      id: integer
+      skill_name: string
+      description: string
+      users: UserResponseWithSkillLevels[]
+      categories: CategoryResponse[]
+    example:
+      id: 1
+      skill_name: "Ruby on Rails"
+      description: "Open source language maintained by Basecamp"
+      users: [
+        {
+          id: 1,
+          username: jdavis,
+          first_name: Joseph,
+          last_name: Davis,
+          email_address: joseph.davis@rtslabs.com,
+          job_title: Software Engineer,
+          skill_level: 3,
+          interest_level: 3
+        },
+        {
+          id: 2,
+          username: gkemmey,
+          first_name: Gray,
+          last_name: Kemmey,
+          email_address: gray.kemmey@rtslabs.com,
+          job_title: Software Engineer,
+          skill_level: 5,
+          interest_level: 5
+        }
+      ]
+      categories: [
+        {
+          id: 1,
+          category_name: "Back End",
+          description: "Server side technologies"
+        },
+        {
+          id: 2,
+          category_name: "Open Source",
+          description: "Maintained by a community and free for use and modification"
+        }
+      ]
+  UserSkillPayload:
+    properties:
+      skill_name: string
+      skill_level: integer
+      interest_level: integer
+      categories: array
+    example:
+      skill_name: "reactjs"
+      interest_level: 4
+      skill_level: 3
+      categories: [ "Front End", "javascript" ]
+  UserSkillResponse:
+    properties:
+      skill: SkillResponse
+      skill_level: integer
+      interest_level: integer
+      categories: CategoryResponse[]
+    example:
+      skill: {
+        id: 1,
+        skill_name: "C#/.net",
+        description: "Microsoft's primary language"
+      }
+      skill_level: 4
+      interest_level: 3
+      categories: [
+        {
+          id: 1,
+          category_name: "Back End",
+          description: "Server side technology"
+        },
+        {
+          id: 2,
+          category_name: "Microsoft",
+          description: "Microsoft official technologies"
+        }
+      ]
+  UserSkillUpdatePayload:
+    properties:
+      skill_level: integer
+      interest_level: integer
+      categories: array
+    example:
+      interest_level: 4
+      skill_level: 3
+      categories: [ "Front End", "javascript" ]
+  CategoryResponse:
+    properties:
+      id: integer
+      category_name: string
+      description: string
+    example:
+      id: 1
+      category_name: "Back End"
+      description: "Server side technologies"
+  CategoryPayload:
+    properties:
+      category_name: string
+      description: string
+    example:
+      category_name: "Back End"
+      description: "Server side technologies"
+  CategoryResponseWithSkills:
+    type: CategoryResponse
+    properties:
+      skills: SkillResponse[]
+    example:
+      id: 1
+      category_name: "Back End"
+      description: "Server side technologies"
+      skills: [
+        {
+          id: 1,
+          skill_name: "Ruby on Rails",
+          description: "Open source language maintained by Basecamp"
+        },
+        {
+          id: 2,
+          skill_name: "C#/.net",
+          description: "Microsoft's primary language"
+        }
+      ]
+
+/users:
+  get:
+    description: Get all users
+    responses:
+      200:
+        body:
+          application/json:
+            type: UserResponse[]
+  post:
+    description: Create a new user
+    body:
+      application/json:
+        type: UserPayload
+    responses:
+      201:
+        body:
+          application/json:
+            type: UserResponse
+  /{id}:
+    get:
+      description: Get a user by id
+      responses:
+        200:
+          body:
+            application/json:
+              type: UserResponse
+        404:
+          body:
+            application/json:
+              example: { "message": "No user found for that id."}
+    put:
+      description: Update a user by id
+      body:
+        application/json:
+          type: UserPayload
+      responses:
+        200:
+          body:
+            application/json:
+              type: UserResponse
+        404:
+          body:
+            application/json:
+              example: { "message": "No user found for that id."}
+    delete:
+      description: Delete a user by id
+      responses:
+        200:
+    /skills:
+      get:
+        description: Show all skills for this user
+        responses:
+          200:
+            body:
+              application/json:
+                type: UserSkillResponse[]
+      post:
+        description: Create new skill association for this user.
+        body:
+          application/json:
+            type: UserSkillPayload
+        responses:
+          201:
+            body:
+              application/json:
+                type: UserSkillResponse
+      /{id}:
+        get:
+          description: Get skill by id from skills which belong to user
+          responses:
+            200:
+              body:
+                application/json:
+                  type: UserSkillResponse
+            404:
+              body:
+                application/json:
+                  example: { "message": "Skill not found for this user." }
+        put:
+          description: Edit specific skill by id which belongs to this user
+          body:
+            application/json:
+              type: UserSkillUpdatePayload
+          responses:
+            200:
+              body:
+                application/json:
+                  type: UserSkillResponse
+            404:
+              body:
+                application/json:
+                  example: { "message": "Skill not found for this user." }
+/skills:
+  get:
+    description: Get a list of all skills
+    responses:
+      200:
+        body:
+          application/json:
+            type: SkillResponse[]
+  /{id}:
+    get:
+      description: Get a specific skill by id
+      responses:
+        200:
+          body:
+            application/json:
+              type: SkillResponseWithUsersAndCategories
+/categories:
+  get:
+    description: Get a list of all categories
+    responses:
+      200:
+        body:
+          application/json:
+            type: CategoryResponse[]
+  /{id}:
+    get:
+      description: Get a specific category by id
+      responses:
+        200:
+          body:
+            application/json:
+              type: CategoryResponseWithSkills
+/search:
+  get:
+    description: Search via category, skill, or user
+    queryParameters:
+      search_type:
+        enum: ["skill", "category", "user"]
+      search_term: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: UserResponse[] | SkillResponse[] | CategoryResponse[]
