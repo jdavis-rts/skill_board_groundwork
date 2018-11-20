@@ -42,6 +42,8 @@ class CategoriesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_category
       @category = Category.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { message: "No category found for that id." }, status: 404
     end
 
     # Only allow a trusted parameter "white list" through.

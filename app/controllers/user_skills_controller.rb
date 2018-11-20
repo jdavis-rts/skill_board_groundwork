@@ -46,10 +46,14 @@ private
 
   def set_user
     @user = User.find(params[:user_id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { message: "No user found for that id." }, status: 404
   end
 
   def set_user_skill
     @user_skill = @user.user_skills.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { message: "Skill not found for that user." }, status: 404
   end
 
   def user_skill_params

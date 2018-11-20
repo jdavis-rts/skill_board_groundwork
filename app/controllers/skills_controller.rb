@@ -42,6 +42,8 @@ class SkillsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_skill
       @skill = Skill.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { message: "No skill found for that id." }, status: 404
     end
 
     # Only allow a trusted parameter "white list" through.

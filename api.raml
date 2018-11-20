@@ -4,6 +4,11 @@ version: v1
 baseUri: http://localhost:3003
 
 types:
+  LoginPayload:
+    properties:
+      username: string
+    example:
+      username: jdavis
   UserResponse:
     properties:
       id: integer
@@ -191,6 +196,21 @@ types:
         }
       ]
 
+/login:
+  post:
+    description: Login stub, add real auth in the future
+    body:
+      application/json:
+        type: LoginPayload
+    responses:
+      200:
+        body:
+          application/json:
+            type: UserResponse
+      404:
+        body:
+          application/json:
+            example: { "message": "No user found for that username." }
 /users:
   get:
     description: Get all users
