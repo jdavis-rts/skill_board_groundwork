@@ -339,9 +339,7 @@ types:
   get:
     description: Search via category, skill, or user
     queryParameters:
-      search_type:
-        enum: ["skill", "category", "user"]
-      search_term: string
+      term: string
     responses:
       200:
         body:
